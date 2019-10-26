@@ -23,3 +23,6 @@
 hs_err_pid*
 /.classpath
 /.project
+
+# Contents of the bin folder
+/bin/
