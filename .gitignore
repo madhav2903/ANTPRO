@@ -26,3 +26,6 @@ hs_err_pid*
 
 # Contents of the bin folder
 bin/
+
+# Ignore the junit output
+reports/

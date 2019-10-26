@@ -1,0 +1,66 @@
+<project name="Ant Project">
+
+	<!-- define common filename and directories -->
+	<property name="bin_dir" value="./bin" />
+	<property name="src_dir" value="./src" />
+	<property name="lib_dir" value="./lib" />
+	<property name="test_report" value="./reports" />
+
+	<path id="compiler_path">
+		<fileset dir="${lib_dir}">
+			<include name="*.jar" />
+			<exclude name="*.txt" />
+		</fileset>
+	</path>
+
+	<path id="runtime_path">
+		<path refid="compiler_path" />
+		<pathelement location="${bin_dir}" />
+	</path>
+
+	<!-- our build definition appears here -->
+	<echo message="Build Started">
+	</echo>
+
+	<!-- 1:delete any generated resources -->
+	<delete dir="${bin_dir}">
+	</delete>
+	<delete dir="${test_report}">
+	</delete>
+
+	<!-- 2:recreate the generated directories -->
+	<mkdir dir="${bin_dir}" />
+	<mkdir dir="${test_report}" />
+
+	<!-- 3:Compile all of the java -->
+	<javac srcdir="${src_dir}" destdir="${bin_dir}" includeantruntime="false" debug="true">
+		<classpath refid="compiler_path" />
+	</javac>
+
+	<!-- 4: Run unit tests -->
+	<junit printsummary="on" failureproperty="junit.failure">
+		<classpath refid="runtime_path" />
+
+		<batchtest todir="${test_report}">
+			<formatter type="xml" />
+
+			<fileset dir="${src_dir}">
+				<include name="**/*Test*.java" />
+			</fileset>
+
+		</batchtest>
+
+	</junit>
+
+	<!-- 5: Generat a test report -->
+	<junitreport>
+		<fileset dir="${test_report}" />
+		<report todir="${test_report}" />
+	</junitreport>
+
+	<!-- After the reports are generated, add the below step -->
+	<fail if="junit.failure" message="Some Junit Tests have failed." />
+	<echo message="Build Finished">
+	</echo>
+
+</project>
