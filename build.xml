@@ -5,6 +5,8 @@
 	<property name="src_dir" value="./src" />
 	<property name="lib_dir" value="./lib" />
 	<property name="test_report" value="./reports" />
+	<property name="doc_dir" value="./docs" />
+	<property name="client_classname" value="com.nk2164.client.SpringClient" />
 
 	<path id="compiler_path">
 		<fileset dir="${lib_dir}">
@@ -23,14 +25,14 @@
 	</echo>
 
 	<!-- 1:delete any generated resources -->
-	<delete dir="${bin_dir}">
-	</delete>
-	<delete dir="${test_report}">
-	</delete>
+	<delete dir="${bin_dir}" />
+	<delete dir="${test_report}" />
+	<delete dir="${doc_dir}}" />
 
 	<!-- 2:recreate the generated directories -->
 	<mkdir dir="${bin_dir}" />
 	<mkdir dir="${test_report}" />
+	<mkdir dir="${doc_dir}" />
 
 	<!-- 3:Compile all of the java -->
 	<javac srcdir="${src_dir}" destdir="${bin_dir}" includeantruntime="false" debug="true">
@@ -53,10 +55,33 @@
 	</junit>
 
 	<!-- 5: Generat a test report -->
-	<junitreport>
-		<fileset dir="${test_report}" />
+	<junitreport todir="${test_report}">
+		<fileset dir="${test_report}">
+			<include name="TEST-*.xml" />
+		</fileset>
 		<report todir="${test_report}" />
 	</junitreport>
+
+	<!-- 6: Generate Code Documentation -->
+	<javadoc destdir="${doc_dir}">
+		<packageset dir="${src_dir}">
+			<include name="com/**" />
+		</packageset>
+	</javadoc>
+
+	<!-- 7: Copy the application.xml and log4j.properties to bin dir -->
+	<copy todir="${bin_dir}">
+		<fileset dir="${src_dir}">
+		  <exclude name="**/*.java"/>
+		</fileset>
+	</copy>
+
+	<!-- 8: Run the application -->
+	<java classname="${client_classname}">
+		<classpath>
+			<path refid="runtime_path" />
+		</classpath>
+	</java>
 
 	<!-- After the reports are generated, add the below step -->
 	<fail if="junit.failure" message="Some Junit Tests have failed." />
