@@ -9,11 +9,7 @@ import com.nk2164.data.BookNotFoundException;
 import com.nk2164.domain.Book;
 import com.nk2164.services.BookService;
 
-/**
- * This is a a console application to test the wiring etc of our beans. It isn't intended to replace
- * the "real" front end!
- * @author Dick Chesterwood
- */
+
 public class SpringClient 
 {
 	public static void main(String[] args)
@@ -43,7 +39,7 @@ public class SpringClient
 		} 
 		catch (BookNotFoundException e) 
 		{
-			System.out.println("I really am most awfully sorry - that book doesn't exist.");
+			System.out.println("I really am sorry - that book doesn't exist.");
 		}
 		
 		// find all books by Rod Johnson

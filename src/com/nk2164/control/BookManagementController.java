@@ -15,7 +15,6 @@ import com.nk2164.services.BookService;
 /**
  * Controls all use cases related to the management of books (except for the creation of books, 
  * which is handled by the CreateBookController. 
- * @author cybrandian
  * @see CreateBookController
  */
 @Controller
