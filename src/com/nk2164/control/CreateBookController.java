@@ -15,7 +15,6 @@ import com.nk2164.services.BookService;
 /**
  * A Controller to handle the creation of a book, including the Form Management
  * (re-presentation of forms)
- * @author Dick Chesterwood
  */
 @Controller
 @RequestMapping("/addNewBook")
