@@ -1,0 +1,12 @@
+<project name="target testing" >
+
+	<target name="target1">
+	 <echo message="at the start of target1"/>
+	 <echo message="at the end of target2"/>	 
+	</target>
+
+	<target name="target2">
+	 <echo message="This is target2"/>
+	</target>
+
+</project>
