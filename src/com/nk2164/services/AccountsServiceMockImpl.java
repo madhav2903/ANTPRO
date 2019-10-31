@@ -17,7 +17,7 @@ public class AccountsServiceMockImpl implements AccountsService
 	@Override
 	public Customer findCustomer(String id) throws CustomerNotFoundException {
 		if (id.equals("1"))
-			return new Customer("Fred Jackson");
+			return new Customer("Mary Poppins");
 		else throw new CustomerNotFoundException();
 	}
 
