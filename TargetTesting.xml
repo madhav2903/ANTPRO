@@ -1,12 +1,19 @@
-<project name="target testing" >
+<project name="target testing" default="target4">
 
 	<target name="target1">
-	 <echo message="at the start of target1"/>
-	 <echo message="at the end of target2"/>	 
+	 <echo message="This is target1"/> 
 	</target>
 
-	<target name="target2">
+	<target name="target2" depends="target1" >
 	 <echo message="This is target2"/>
 	</target>
+	
+	<target name="target3" depends="target2" >
+	 <echo message="This is target3"/>
+	</target>	
 
+	<target name="target4" depends="target3">
+	 <echo message="This is target4"/>
+	</target>
+	
 </project>

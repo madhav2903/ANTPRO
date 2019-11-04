@@ -1,4 +1,4 @@
-<project name="Ant Project">
+ <project name="Ant Project">
 
 	<!-- define common filename and directories -->
 	<property name="bin_dir" value="./bin" />
