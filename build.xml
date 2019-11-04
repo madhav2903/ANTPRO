@@ -1,4 +1,4 @@
- <project name="Ant Project">
+<project name="Ant Project">
 
 	<!-- define common filename and directories -->
 	<property name="bin_dir" value="./bin" />
@@ -20,72 +20,85 @@
 		<pathelement location="${bin_dir}" />
 	</path>
 
-	<!-- our build definition appears here -->
-	<echo message="Build Started">
-	</echo>
-
 	<!-- 1:delete any generated resources -->
-	<delete dir="${bin_dir}" />
-	<delete dir="${test_report}" />
-	<delete dir="${doc_dir}}" />
+	<target name="delete folders">
+		<delete dir="${bin_dir}" />
+		<delete dir="${test_report}" />
+		<delete dir="${doc_dir}}" />
+	</target>
+
 
 	<!-- 2:recreate the generated directories -->
-	<mkdir dir="${bin_dir}" />
-	<mkdir dir="${test_report}" />
-	<mkdir dir="${doc_dir}" />
+	<target name="recreate folders" depends="delete folders">
+		<mkdir dir="${bin_dir}" />
+		<mkdir dir="${test_report}" />
+		<mkdir dir="${doc_dir}" />
+	</target>
 
 	<!-- 3:Compile all of the java -->
-	<javac srcdir="${src_dir}" destdir="${bin_dir}" includeantruntime="false" debug="true">
-		<classpath refid="compiler_path" />
-	</javac>
+	<target name="compile app" depends="recreate folders">
+		<javac srcdir="${src_dir}" destdir="${bin_dir}" includeantruntime="false" debug="true">
+			<classpath refid="compiler_path" />
+		</javac>
+	</target>
 
 	<!-- 4: Run unit tests -->
-	<junit printsummary="on" failureproperty="junit.failure">
-		<classpath refid="runtime_path" />
-
-		<batchtest todir="${test_report}">
-			<formatter type="xml" />
-
-			<fileset dir="${src_dir}">
-				<include name="**/*Test*.java" />
+	<target name="run unit test" depends="compile app">
+		<junitreport todir="${test_report}">
+			<fileset dir="${test_report}">
+				<include name="TEST-*.xml" />
 			</fileset>
+			<report todir="${test_report}" />
+		</junitreport>
+	</target>
 
-		</batchtest>
-
-	</junit>
 
 	<!-- 5: Generat a test report -->
-	<junitreport todir="${test_report}">
-		<fileset dir="${test_report}">
-			<include name="TEST-*.xml" />
-		</fileset>
-		<report todir="${test_report}" />
-	</junitreport>
+	<target name="Generate test report" depends="run unit test">
 
-	<!-- 6: Generate Code Documentation -->
-	<javadoc destdir="${doc_dir}">
-		<packageset dir="${src_dir}">
-			<include name="com/**" />
-		</packageset>
-	</javadoc>
+		<junit printsummary="on" failureproperty="junit.failure">
+			<classpath refid="runtime_path" />
+
+			<batchtest todir="${test_report}">
+				<formatter type="xml" />
+
+				<fileset dir="${src_dir}">
+					<include name="**/*Test*.java" />
+				</fileset>
+
+			</batchtest>
+
+		</junit>
+
+		<!-- 6: Generate Code Documentation -->
+		<javadoc destdir="${doc_dir}">
+			<packageset dir="${src_dir}">
+				<include name="com/**" />
+			</packageset>
+		</javadoc>
+
+	</target>
+
 
 	<!-- 7: Copy the application.xml and log4j.properties to bin dir -->
-	<copy todir="${bin_dir}">
-		<fileset dir="${src_dir}">
-		  <exclude name="**/*.java"/>
-		</fileset>
-	</copy>
+	<target name="copy required prop file" depends="Generate test report">
+		<copy todir="${bin_dir}">
+			<fileset dir="${src_dir}">
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
+	</target>
 
 	<!-- 8: Run the application -->
-	<java classname="${client_classname}">
-		<classpath>
-			<path refid="runtime_path" />
-		</classpath>
-	</java>
+	<target name="run app" depends="copy required prop file">
+		<java classname="${client_classname}">
+			<classpath>
+				<path refid="runtime_path" />
+			</classpath>
+		</java>
+	</target>
 
 	<!-- After the reports are generated, add the below step -->
 	<fail if="junit.failure" message="Some Junit Tests have failed." />
-	<echo message="Build Finished">
-	</echo>
 
 </project>
