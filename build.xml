@@ -1,4 +1,4 @@
-<project name="Ant Project">
+<project name="Ant Project" default="run">
 
 	<!-- define common filename and directories -->
 	<property name="bin_dir" value="./bin" />
@@ -20,41 +20,30 @@
 		<pathelement location="${bin_dir}" />
 	</path>
 
-	<!-- 1:delete any generated resources -->
-	<target name="delete folders">
+	<!-- delete any generated resources -->
+	<target name="clean">
 		<delete dir="${bin_dir}" />
 		<delete dir="${test_report}" />
 		<delete dir="${doc_dir}}" />
 	</target>
 
 
-	<!-- 2:recreate the generated directories -->
-	<target name="recreate folders" depends="delete folders">
+	<!-- recreate the generated directories -->
+	<target name="create_directories" depends="clean">
 		<mkdir dir="${bin_dir}" />
 		<mkdir dir="${test_report}" />
 		<mkdir dir="${doc_dir}" />
 	</target>
 
-	<!-- 3:Compile all of the java -->
-	<target name="compile app" depends="recreate folders">
+	<!-- Compile all of the java -->
+	<target name="compile" depends="create_directories">
 		<javac srcdir="${src_dir}" destdir="${bin_dir}" includeantruntime="false" debug="true">
 			<classpath refid="compiler_path" />
 		</javac>
 	</target>
 
-	<!-- 4: Run unit tests -->
-	<target name="run unit test" depends="compile app">
-		<junitreport todir="${test_report}">
-			<fileset dir="${test_report}">
-				<include name="TEST-*.xml" />
-			</fileset>
-			<report todir="${test_report}" />
-		</junitreport>
-	</target>
-
-
-	<!-- 5: Generat a test report -->
-	<target name="Generate test report" depends="run unit test">
+	<!-- Run all of junit tests -->
+	<target name="run_tests" depends="compile">
 
 		<junit printsummary="on" failureproperty="junit.failure">
 			<classpath refid="runtime_path" />
@@ -69,8 +58,20 @@
 			</batchtest>
 
 		</junit>
+		
+		<!-- Generat a test report -->
+		<junitreport todir="${test_report}">
+			<fileset dir="${test_report}">
+				<include name="TEST-*.xml" />
+			</fileset>
+			<report todir="${test_report}" />
+		</junitreport>
+		
+	</target>
 
-		<!-- 6: Generate Code Documentation -->
+
+	<!-- Generate a javadocs -->
+	<target name="generate_docs" depends="compile">
 		<javadoc destdir="${doc_dir}">
 			<packageset dir="${src_dir}">
 				<include name="com/**" />
@@ -79,18 +80,14 @@
 
 	</target>
 
-
-	<!-- 7: Copy the application.xml and log4j.properties to bin dir -->
-	<target name="copy required prop file" depends="Generate test report">
+	<!-- Copy application.xml and log4j.properties to bin dir & run application -->
+	<target name="run" depends="generate_docs , run_tests">
 		<copy todir="${bin_dir}">
 			<fileset dir="${src_dir}">
 				<exclude name="**/*.java" />
 			</fileset>
 		</copy>
-	</target>
-
-	<!-- 8: Run the application -->
-	<target name="run app" depends="copy required prop file">
+		
 		<java classname="${client_classname}">
 			<classpath>
 				<path refid="runtime_path" />
