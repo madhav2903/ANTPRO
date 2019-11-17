@@ -7,6 +7,11 @@
 	<property name="test_report" value="./reports" />
 	<property name="doc_dir" value="./docs" />
 	<property name="client_classname" value="com.nk2164.client.SpringClient" />
+	<property name="dist_dir" value="./dist" />
+	<property name="warfile" value="mywebapp" />
+	<property name="html_dir" value="./web" />
+	<property name="webinf_dir" value="./WEB-INF" />
+	<property name="tomcat_dir" value="../tomcat/webapps" />
 
 	<path id="compiler_path">
 		<fileset dir="${lib_dir}">
@@ -24,7 +29,8 @@
 	<target name="clean">
 		<delete dir="${bin_dir}" />
 		<delete dir="${test_report}" />
-		<delete dir="${doc_dir}}" />
+		<delete dir="${doc_dir}" />
+		<delete dir="${dist_dir}" />
 	</target>
 
 
@@ -33,6 +39,7 @@
 		<mkdir dir="${bin_dir}" />
 		<mkdir dir="${test_report}" />
 		<mkdir dir="${doc_dir}" />
+		<mkdir dir="${dist_dir}" />
 	</target>
 
 	<!-- Compile all of the java -->
@@ -40,6 +47,11 @@
 		<javac srcdir="${src_dir}" destdir="${bin_dir}" includeantruntime="false" debug="true">
 			<classpath refid="compiler_path" />
 		</javac>
+		<copy todir="${bin_dir}">
+			<fileset dir="${src_dir}">
+				<exclude name="**/*.java" />
+			</fileset>
+		</copy>
 	</target>
 
 	<!-- Run all of junit tests -->
@@ -58,7 +70,7 @@
 			</batchtest>
 
 		</junit>
-		
+
 		<!-- Generat a test report -->
 		<junitreport todir="${test_report}">
 			<fileset dir="${test_report}">
@@ -66,7 +78,9 @@
 			</fileset>
 			<report todir="${test_report}" />
 		</junitreport>
-		
+
+		<!-- After the reports are generated, add the below step -->
+		<fail if="junit.failure" message="Some Junit Tests have failed." />
 	</target>
 
 
@@ -87,7 +101,7 @@
 				<exclude name="**/*.java" />
 			</fileset>
 		</copy>
-		
+
 		<java classname="${client_classname}">
 			<classpath>
 				<path refid="runtime_path" />
@@ -95,7 +109,27 @@
 		</java>
 	</target>
 
-	<!-- After the reports are generated, add the below step -->
-	<fail if="junit.failure" message="Some Junit Tests have failed." />
+	<target name="deploy" depends="compile" >
+		<war destfile="${dist_dir}/${warfile}.war" webxml="web.xml">
+			<fileset dir="${html_dir}" />
+			<lib dir="${lib_dir}" >
+				<exclude name="servlet-api.jar"/>
+			</lib>
+			<classes dir="${bin_dir}" />
+			<classes dir="${webinf_dir}">
+				<include name="**/*.xml" />
+				<include name="**/*.properties"/>
+			</classes>
+			<webinf dir="${webinf_dir}" >
+				<exclude name="**/*.properties"/>	
+			</webinf>
+			<webinf dir="${src_dir}">
+				<include name="**/*.xml"/>
+				<include name="**/*.properties"/>
+			</webinf>
+		</war>
+		
+		<copy file="${dist_dir}/${warfile}.war" todir="${tomcat_dir}"></copy>
+	</target>
 
 </project>
