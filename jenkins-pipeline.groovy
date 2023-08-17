@@ -8,7 +8,7 @@ pipeline {
         }
         stage('build'){
             steps {
-                sh 'ant install'
+                sh 'ant'
             }
         }
         stage('executeSonarqubeReport')
