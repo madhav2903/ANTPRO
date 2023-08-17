@@ -3,13 +3,12 @@ pipeline {
     stages {
         stage('check'){
             steps {
-        git credentialsId: 'Github', url: 'https://github.com/madhav2903/ANTPRO.git'
+        git credentialsId: 'Github', url: 'https://github.com/madhav2903/Ant-Project.git'
             }
         }
         stage('build'){
             steps {
-                sh 'ant -version'
-                sh 'ant build.xml'
+                sh 'ant'
             }
         }
         stage('executeSonarqubeReport')
