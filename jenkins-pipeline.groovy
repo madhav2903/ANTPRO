@@ -20,7 +20,7 @@ pipeline {
         stage('deploy')
         {
              steps {
-               sh "deploy adapters: [tomcat9(credentialsId: 'TomJen', path: '', url: 'http://localhost:8081// opt/tomcat/webapps/')], contextPath: 'null', war: '**/*.war'"
+               sh "deploy adapters: [tomcat9(credentialsId: 'TomJen', path: '', url: 'http://localhost:8081// opt/tomcat/webapps/')], contextPath: 'null', war: '**/*.jar'"
         }
     }
   }
